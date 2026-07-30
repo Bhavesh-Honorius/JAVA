@@ -10,7 +10,7 @@ public class NumberSeries
         {
             System.out.printf("%d ",i);
         }
-
+        sc.close();
     }
 }
 
