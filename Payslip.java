@@ -113,7 +113,7 @@ public class Payslip
         {
             gd.getC();
             if(gd.c>=1 && gd.c<=4)
-                gd.getD();; 
+                gd.getD();
             switch (gd.c) 
             {
             case 1:
