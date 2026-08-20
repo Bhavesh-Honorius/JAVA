@@ -7,7 +7,7 @@ class Bag
 }
 class Book extends Bag
 {
-    Bag[] bk=new Bag[5];
+    static Bag[] bk=new Bag[5];
     void AddBook()
     {
         Scanner sc =new Scanner(System.in);
@@ -15,6 +15,7 @@ class Book extends Bag
         int i=0;
         while(l)
         {
+            bk[i]=new Bag();
             System.out.print("Enter the book name:");
             bk[i].bName=sc.next();
             System.out.print("Enter the Author Name:");
@@ -40,23 +41,52 @@ class Book extends Bag
     void ListBook()
     {
 
-        for(int i=0;i<5;i++)
+        for(int j=0;j<5;j++)
         {
-            System.out.print("book name:"+bName[i]);
-            System.out.print("Author Name:"+author[i]);
-            System.out.print("book genre:"+gener[i]);
+            System.out.print("book name:"+bk[j].bName);
+            System.out.print("Author Name:"+bk[j].author);
+            System.out.print("book genre:"+bk[j].gener);
         }
     }
 }
 class lib extends Book
 {
-    void borrow(int i)
+    int borrow(String Book)
     {
-        avaliblity[i]--;
+        int i,c=0;
+        for(i=0;i<5;i++)
+        {
+            if(bk[i].bName.equals(Book))
+            {
+                bk[i].availablity--;
+                c=1;
+                return 1;
+            }    
+        }
+        if(c==0)
+        {
+            System.out.println("book not available");
+            return 0;
+        }
+        
     }
-    void returning()
+    int returning(String Book)
     {
-        avaliblity[i]++;
+        int i,c=0;
+        for(i=0;i<5;i++)
+        {
+            if(bk[i].bName.equals(Book))
+            {
+                bk[i].availablity++;
+                c=1;
+                return 1;
+            }
+        }
+        if(c==0)
+        {
+            System.out.println("book not available");
+            return 0;
+        }
     }
 }
 class User extends lib
@@ -66,31 +96,43 @@ class User extends lib
     String[] bookLog = new String[3];
     void getDetail()
     {
-        int c;
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter User ID");
-        userName=sc.next();
-        System.out.print("Enter Name:");
-        userName=sc.next();
-        System.out.println("1.borrow\n2.return");
-        System.out.print("Enter your choise:");
-        c=sc.nextInt();
-        switch(c)
-        {
-            case 1:
-                System.out.print("Enter the book you want to borrow:");
-                book=sc.next();
-                borrow();
-                bookLog[count++]=book;
-                break;
-            case 2:
-                System.out.println("Enter the book you want to return");
-                book=sc.next();
-                returning();
-                count--;
-                break;
-            default:
-                System.out.print("enter valid option");
+            int c;
+            String cc;
+            boolean l=true;
+            Scanner sc = new Scanner(System.in);
+            while(l)
+            {
+            System.out.print("Enter User ID");
+            userid=sc.nextInt();
+            System.out.print("Enter Name:");
+            userName=sc.next();
+            System.out.println("1.borrow\n2.return");
+            System.out.print("Enter your choise:");
+            c=sc.nextInt();
+            switch(c)
+            {
+                case 1:
+                    int b;
+                    System.out.print("Enter the book you want to borrow:");
+                    book=sc.next();
+                    b=borrow(book);
+                    if(b==1)
+                        bookLog[count++]=book;
+                    break;
+                case 2:
+                    System.out.println("Enter the book you want to return");
+                    book=sc.next();
+                    returning(book);
+                    count--;
+                    break;
+                default:
+                    System.out.print("enter valid option");
+            }
+            System.out.println("Do you want to continue (y/n)");
+            cc=sc.next();
+            if(cc.equals("y"));
+            else
+                l=false;
         }
         sc.close();
     }
@@ -111,30 +153,43 @@ public class Library
     public static void main(String[] args)
     {
         int c,ch;
+        char cc;
+        boolean l=true;
         Scanner sc=new Scanner(System.in);
-        System.out.print("1.librarian\n2.student");
-        System.out.print("Enter your choise:");
-        c=sc.nextInt();
-        switch (c) {
-            case 1:
-                Book ob=new Book();
-                System.out.println("1.Add Book\n2.list Book");
-                System.out.print("enter choise:");
-                ch=sc.nextInt();
-                if(ch==1)
-                {
-                    ob.AddBook();  
-                }
-                else if(ch==2)
-                {
-                    ob.ListBook();
-                }
-                break;
-            case 2:
-                User o=new User();
-                o.getDetail();
-            default:
-                System.out.println("Enter valid option");;
+        while(l)
+        {
+            System.out.print("1.librarian\n2.student");
+            System.out.print("Enter your choise:");
+            c=sc.nextInt();
+            switch (c) 
+            {
+                case 1:
+                    Book ob=new Book();
+                    System.out.println("1.Add Book\n2.list Book");
+                    System.out.print("enter choise:");
+                    ch=sc.nextInt();
+                    if(ch==1)
+                    {
+                        ob.AddBook();  
+                    }
+                    else if(ch==2)
+                    {
+                        ob.ListBook();
+                    }
+                    break;
+                case 2:
+                    User o=new User();
+                    o.getDetail();
+                default:
+                    System.out.println("Enter valid option");
+            }
+            System.out.println("do you want to continue(y/n)")
+            cc=sc.nextChar();
+            if(cc.equals('y'))
+            else
+            {
+                l=false;
+            }
         }
         sc.close();       
     }
