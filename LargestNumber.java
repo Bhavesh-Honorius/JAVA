@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 public class LargestNumber {
@@ -18,3 +19,25 @@ public class LargestNumber {
     }
     
 }
+=======
+
+
+public class LargestNumber {
+    public static void main(String[] args) {
+        int a=2,b=5,c=4;
+        if(a>b && a>c)
+        {
+            System.out.println("The largest number is :"+a);
+        }
+        else if(b>c)
+        {
+            System.out.println("The largest number  is :"+b);
+        }
+        else
+        {
+            System.out.println("The largest number is :"+c);
+        }
+    }
+    
+}
+>>>>>>> dbdb035ab62aebba642e253072e457b4cd044537

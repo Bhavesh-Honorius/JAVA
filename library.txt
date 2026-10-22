@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import java.util.Scanner;
 
 class Book {
@@ -204,3 +205,211 @@ public class Library {
         sc.close(); // Safely closing scanner exactly once at the end of the runtime.
     }
 }
+=======
+import java.util.Scanner;
+
+class Book {
+    // Correct array initializations to avoid NullPointerException
+    static String[] bName = new String[5];
+    static String[] author = new String[5];
+    static String[] gener = new String[5];
+    static int[] avaliblity = new int[5];
+    static int totalBookCount = 0; // Tracks the actual number of unique books added
+
+    void AddBook(Scanner sc) {
+        boolean keepAdding = true;
+        
+        while (keepAdding && totalBookCount < 5) {
+            System.out.print("Enter the book name: ");
+            bName[totalBookCount] = sc.next();
+            
+            System.out.print("Enter the Author Name: ");
+            author[totalBookCount] = sc.next();
+            
+            System.out.print("Enter the book genre: ");
+            gener[totalBookCount] = sc.next();
+            
+            System.out.print("Enter the number of books: ");
+            avaliblity[totalBookCount] = sc.nextInt();
+            
+            totalBookCount++;
+            
+            if (totalBookCount >= 5) {
+                System.out.println("Inventory full! Cannot add more books.");
+                break;
+            }
+            
+            System.out.print("Do you want to continue(y/n): ");
+            char c = sc.next().charAt(0);
+            if (c != 'y' && c != 'Y') {
+                keepAdding = false;
+            }
+        }
+    }
+
+    void ListBook() {
+        if (totalBookCount == 0) {
+            System.out.println("The library is currently empty.");
+            return;
+        }
+        for (int i = 0; i < totalBookCount; i++) {
+            System.out.println("\nBook Title: " + bName[i]);
+            System.out.println("Author Name: " + author[i]);
+            System.out.println("Book Genre: " + gener[i]);
+            System.out.println("Available Stock: " + avaliblity[i]);
+        }
+    }
+}
+
+class Lib extends Book {
+    // Finds a book index based on title matching
+    int findBookIndex(String bookName) {
+        for (int i = 0; i < totalBookCount; i++) {
+            if (bName[i] != null && bName[i].equalsIgnoreCase(bookName)) {
+                return i;
+            }
+        }
+        return -1; // Book not found
+    }
+
+    void borrow(int index) {
+        if (avaliblity[index] > 0) {
+            avaliblity[index]--;
+            System.out.println("Book borrowed successfully!");
+        } else {
+            System.out.println("Sorry, this book is currently out of stock.");
+        }
+    }
+
+    void returning(int index) {
+        avaliblity[index]++;
+        System.out.println("Book returned successfully!");
+    }
+}
+
+class User extends Lib {
+    String userId, userName, book;
+    String[] bookLog = new String[3];
+    int count = 0;
+
+    void getDetail(Scanner sc) {
+        System.out.print("Enter User ID: ");
+        userId = sc.next();
+        System.out.print("Enter Name: ");
+        userName = sc.next();
+
+        System.out.println("\n1. Borrow\n2. Return");
+        System.out.print("Enter your choice: ");
+        int choice = sc.nextInt();
+
+        switch (choice) {
+            case 1:
+                System.out.print("Enter the book you want to borrow: ");
+                book = sc.next();
+                int borrowIdx = findBookIndex(book);
+                
+                if (borrowIdx != -1) {
+                    if (count < 3) {
+                        borrow(borrowIdx);
+                        bookLog[count++] = book;
+                    } else {
+                        System.out.println("You have reached your maximum borrowing limit (3 books).");
+                    }
+                } else {
+                    System.out.println("Book not found in library directory.");
+                }
+                break;
+
+            case 2:
+                System.out.print("Enter the book you want to return: ");
+                book = sc.next();
+                int returnIdx = findBookIndex(book);
+                
+                if (returnIdx != -1) {
+                    // Check if user actually borrowed it
+                    boolean holdsBook = false;
+                    for (int i = 0; i < count; i++) {
+                        if (bookLog[i] != null && bookLog[i].equalsIgnoreCase(book)) {
+                            // Remove from log
+                            bookLog[i] = bookLog[count - 1]; 
+                            bookLog[count - 1] = null;
+                            count--;
+                            holdsBook = true;
+                            break;
+                        }
+                    }
+                    if (holdsBook) {
+                        returning(returnIdx);
+                    } else {
+                        System.out.println("You didn't borrow this book according to logs.");
+                    }
+                } else {
+                    System.out.println("This book does not belong to our library database.");
+                }
+                break;
+
+            default:
+                System.out.println("Invalid option selected.");
+        }
+    }
+
+    void displayDetail() {
+        System.out.println("\n--- User Profile ---");
+        System.out.println("User ID: " + userId);
+        System.out.println("Name: " + userName);
+        System.out.println("Books borrowed: ");
+        if (count == 0) {
+            System.out.println("None");
+        } else {
+            for (int i = 0; i < count; i++) {
+                System.out.println("- " + bookLog[i]);
+            }
+        }
+    }
+}
+
+public class Library {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Book bookManager = new Book();
+        User userSession = new User();
+        boolean running = true;
+
+        while (running) {
+            System.out.println("\n=== Library Dashboard ===");
+            System.out.println("1. Librarian Portal");
+            System.out.println("2. Student Portal");
+            System.out.println("3. Exit System");
+            System.out.print("Enter your choice: ");
+            int identityChoice = sc.nextInt();
+
+            switch (identityChoice) {
+                case 1:
+                    System.out.println("\n1. Add Book\n2. List Books");
+                    System.out.print("Enter action choice: ");
+                    int libChoice = sc.nextInt();
+                    if (libChoice == 1) {
+                        bookManager.AddBook(sc);
+                    } else if (libChoice == 2) {
+                        bookManager.ListBook();
+                    }
+                    break;
+
+                case 2:
+                    userSession.getDetail(sc);
+                    userSession.displayDetail();
+                    break;
+
+                case 3:
+                    System.out.println("Exiting Application. Goodbye!");
+                    running = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+        sc.close(); // Safely closing scanner exactly once at the end of the runtime.
+    }
+}
+>>>>>>> dbdb035ab62aebba642e253072e457b4cd044537
